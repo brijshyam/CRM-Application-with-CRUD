@@ -1,0 +1,90 @@
+.login-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5rem;
+  width: 100vw;
+}
+
+.form-element {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  width: 10%;
+  outline: 2px solid;
+  padding: 5rem;
+}
+
+input {
+  padding: 0.5em;
+}
+
+.customer-details-container {
+  width: 70vw;
+  outline: 1px solid #eee;
+}
+
+.customer-details {
+  font-family: Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.customer-details td,
+.customer-details th {
+  /* outline: 1px solid #ddd; */
+  padding: 8px;
+}
+
+.customer-details tr:nth-child(even) {
+  background-color: #444;
+}
+
+.customer-details tr:hover {
+  background-color: #bdbbbb31;
+}
+
+.customer-details th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: center;
+  background-color: #04AA6D;
+  color: white;
+}
+
+table {
+  /* outline: 1px soild saddlebrown; */
+  padding: 1rem;
+  width: 100%;
+}
+
+.btn-row {
+  width: 10rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.action-btn {
+  margin-left: 0.2rem;
+}
+
+.action-btn:nth-of-type(1) {
+  background-color: green;
+}
+
+.action-btn:nth-of-type(2) {
+  background-color: rgb(0, 87, 128);
+}
+
+.action-btn:nth-of-type(3) {
+  background-color: rgb(128, 0, 0);
+}
+
+.action-btn:hover {
+  font-size: 1.1;
+}
