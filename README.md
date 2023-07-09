@@ -36,9 +36,26 @@ Replace `<your-mongodb-uri>` with your MongoDB connection string and `<your-jwt-
 -   Update Customer: Click the "Edit" button next to a customer to update the customer's information in a modal.
 -   View Customer: Click the "View" button next to a customer to view the customer's details in a modal.
 
-## Contributing
+## DB Schema
 
-Contributions are welcome! If you encounter any issues or have suggestions for improvements, please create a new issue or submit a pull request.
+const customerSchema = new mongoose.Schema({
+name: {
+type: String,
+required: true
+},
+mobile: {
+type: String,
+required: true
+},
+email: {
+type: String,
+required: true
+},
+address: {
+type: String,
+required: true
+}
+});
 
 ## License
 
