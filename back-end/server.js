@@ -2,7 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import authenticateToken from "jsonwebtoken"
+import cors from 'cors';
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -28,13 +28,25 @@ const customerSchema = new mongoose.Schema({
 
 const Customer = mongoose.model('Customer', customerSchema);
 
-// CORS configuration
-app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*'); // Allow requests from any origin
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE'); // Allow specified HTTP methods
-    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept'); // Allow specified headers
-    next();
+// For auth User
+const userSchema = new mongoose.Schema({
+    name: { type: String, required: true, trim: true },
+    email: { type: String, required: true, trim: true },
+    password: { type: String, required: true, trim: true },
+    tc: { type: Boolean, required: true, }
 });
+
+const userModel = mongoose.model("user", userSchema);
+
+// CORS configuration
+// app.use((req, res, next) => {
+//     res.setHeader('Access-Control-Allow-Origin', '*'); // Allow requests from any origin
+//     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE'); // Allow specified HTTP methods
+//     res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept'); // Allow specified headers
+//     next();
+// });
+//cors policy 
+app.use(cors());
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -109,57 +121,92 @@ app.delete('/api/customers/:id', async (req, res) => {
 });
 
 /* ========================================= Login and Signup Implementation============================ */
-// app.post("/api/signup", async (req, res) => {
-//     try {
-//         const { username, password } = req.body;
+app.post("/api/signin", async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        if (email && password) {
+            const user = await userModel.findOne({ email: email });
+            if (user !== null) {
+                const isMatch = await bcrypt.compare(password, user.password);
+                if (user.email === email && isMatch) {
+                    //Implementing JWT auth in the application 
+                    // Generate JWT token.
+                    // i am writing secret key here only but should be kept in .env
+                    const token = jwt.sign({ userID: user.id }, "skjflkjdklg23546jkl", { expiresIn: '5d' });
+                    res.send({
+                        "status": "success",
+                        "message": "Login Successfully",
+                        "token": token
+                    })
+                } else {
+                    res.send({
+                        "status": "failed",
+                        "message": "Either email or password does not match."
+                    })
+                }
+            } else {
+                res.send({
+                    "status": "failed",
+                    "message": "You are not a registered user."
+                })
+            }
+        } else {
+            res.send({
+                "status": "failed",
+                "message": "All fields are required."
+            })
+        }
+    } catch (error) {
+        console.log("Unable to login", error);
+    }
+});
 
-//         // Check if the username already exists in the database
-//         const existingUser = await User.findOne({ username });
-//         if (existingUser) {
-//             return res.status(409).json({ error: "Username already exists" });
-//         }
+app.post('/api/register', async (req, res) => {
+    const { name, email, password, password_confirmation, tc } = req.body;
+    const user = await userModel.findOne({ email: email });
+    if (user) {
+        res.send({
+            "status": "failed",
+            "message": "User with this mail already exists."
+        })
+    } else {
+        if (name && email && password && password_confirmation && tc) {
+            if (password === password_confirmation) {
+                try {
+                    const salt = await bcrypt.genSalt(10);
+                    const hashPassword = await bcrypt.hash(password, salt)
+                    const newUser = new userModel({
+                        name: name,
+                        email: email,
+                        password: hashPassword,
+                        tc: tc
+                    })
+                    await newUser.save();
+                    //Implementing JWT auth in the application 
+                    const saved_user = await userModel.findOne({ email: email });
+                    // Generate JWT token.
+                    const token = jwt.sign({ userID: saved_user.id }, 'skjflkjdklg23546jkl', { expiresIn: '5d' });
 
-//         // Create a new user instance
-//         const newUser = new User({
-//             username,
-//             password,
-//         });
+                    res.status(201).send({ "status": "success", "message": "User registered successfully", "token": token })
+                } catch (error) {
+                    res.send({
+                        "status": "failed",
+                        "message": "Password and password confirmation does not match"
 
-//         // Save the new user to the database
-//         const savedUser = await newUser.save();
+                    })
+                }
 
-//         // Generate a JWT token for the user
-//         const token = jwt.sign({ userId: savedUser._id }, process.env.JWT_SECRET);
-
-//         // Return the token and user data in the response
-//         res.json({ token, user: savedUser });
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).json({ error: "Internal Server Error" });
-//     }
-// });
-
-// app.get("/api/protected", authenticateToken, (req, res) => {
-//     // Access the authenticated user's data using req.user
-//     const userId = req.user.userId;
-
-//     // Retrieve the user data from the database
-//     User.findById(userId)
-//         .then((user) => {
-//             if (!user) {
-//                 return res.status(404).json({ error: "User not found" });
-//             }
-
-//             // Return the user data in the response
-//             res.json({ user });
-//         })
-//         .catch((error) => {
-//             console.error(error);
-//             res.status(500).json({ error: "Internal Server Error" });
-//         });
-// });
-
-
+            } else {
+                res.send({ "status": "failed", "message": "Password does not match" })
+            }
+        } else {
+            res.send({
+                "status": "failed",
+                "message": "All fields are required."
+            })
+        }
+    }
+})
 
 /* ========================================= Login and Signup Implementation============================ */
 
