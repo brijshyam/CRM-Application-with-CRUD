@@ -10,7 +10,7 @@ const LoginPage = () => {
         e.preventDefault();
         // Send a request to the server to authenticate the user
         try {
-            const response = await fetch("/api/login", {
+            const response = await fetch("http://localhost:5000/api/signin", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -21,12 +21,12 @@ const LoginPage = () => {
             if (response.ok) {
                 // User is authenticated, save the JWT token to local storage
                 const { token } = await response.json();
-                localStorage.setItem("token", token);
+                console.log(token);
+                localStorage.setItem("loginToken", token);
 
                 // Redirect to the dashboard or home page
-                navigateTo("/dashboard");
+                navigateTo("/");
             } else {
-                // Handle authentication error
                 console.error("Login failed");
             }
         } catch (error) {
