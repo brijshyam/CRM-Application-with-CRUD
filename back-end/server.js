@@ -60,6 +60,12 @@ app.use((err, req, res, next) => {
     res.status(500).json({ error: 'Internal Server Error' }); // Send a generic error response
 });
 
+app.get('/', async (req, res) => {
+    res.status(200).send({
+        message: 'Hello from CRM Backend!'
+    })
+})
+
 // Routes
 app.get('/api/customers', async (req, res) => {
     try {
