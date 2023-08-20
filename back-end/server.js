@@ -3,26 +3,32 @@ import mongoose from 'mongoose';
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import cors from 'cors';
+import dotenv from 'dotenv'
+dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
-
+const DB_Password = process.env.DB_PASSWORD;
+const DB_User = process.env.MONGO_USER;
+const uri = `mongodb+srv://${DB_User}:${DB_Password}@testclustor.vc7ixmr.mongodb.net/?retryWrites=true&w=majority`;
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+
+// DB connection 
 mongoose
-    .connect('mongodb://localhost:27017/crm_application', {
+    .connect(uri, {
         useNewUrlParser: true,
-        useUnifiedTopology: true,
-    })
-    .then(() => console.log('Connected to MongoDB'))
-    .catch((err) => console.error('Failed to connect to MongoDB', err));
+        useUnifiedTopology: true
+    }).then(() => console.log("Successfully connected to Atlas!!!"))
+    .catch((e) => console.log(e))
+
 
 // Customer Schema
 const customerSchema = new mongoose.Schema({
     name: String,
+    mobile: String,
     email: String,
-    phone: String,
     address: String,
 });
 
@@ -132,7 +138,7 @@ app.post("/api/signin", async (req, res) => {
                     //Implementing JWT auth in the application 
                     // Generate JWT token.
                     // i am writing secret key here only but should be kept in .env
-                    const token = jwt.sign({ userID: user.id }, "skjflkjdklg23546jkl", { expiresIn: '5d' });
+                    const token = jwt.sign({ userID: user.id }, process.env.JWT_SECRET_KEY, { expiresIn: '5d' });
                     res.send({
                         "status": "success",
                         "message": "Login Successfully",
@@ -185,7 +191,7 @@ app.post('/api/register', async (req, res) => {
                     //Implementing JWT auth in the application 
                     const saved_user = await userModel.findOne({ email: email });
                     // Generate JWT token.
-                    const token = jwt.sign({ userID: saved_user.id }, 'skjflkjdklg23546jkl', { expiresIn: '5d' });
+                    const token = jwt.sign({ userID: saved_user.id }, process.env.JWT_SECRET_KEY, { expiresIn: '5d' });
 
                     res.status(201).send({ "status": "success", "message": "User registered successfully", "token": token })
                 } catch (error) {

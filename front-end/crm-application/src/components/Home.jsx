@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import TableRenderer from "./TableRenderer";
 import ViewModal from "./ViewModal";
 
-function Home() {
+function Home({ setEditCustomerData }) {
     const [isLogged, setIsLogged] = useState(false);
     const [totalCustomer, setTotalCustomer] = useState([]);
     const [newCustomer, setNewCustomer] = useState({
@@ -11,7 +11,6 @@ function Home() {
         email: "",
         address: "",
     });
-    const [editCustomerData, setEditCustomerData] = useState();
     const [viewCustomerData, setViewCustomerData] = useState("");
 
     useEffect(() => {
@@ -32,6 +31,7 @@ function Home() {
     }
 
     async function addCustomer() {
+        console.log(newCustomer);
         try {
             const res = await fetch("http://localhost:5000/api/customers", {
                 method: "POST",

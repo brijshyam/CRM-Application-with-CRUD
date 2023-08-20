@@ -1,12 +1,12 @@
 import React from "react";
 
 function ViewModal({ viewCustomerData, setViewCustomerData }) {
-    console.log(viewCustomerData);
+    // console.log(viewCustomerData);
     function closeModal() {
         setViewCustomerData("");
     }
     return (
-        <div className="modal">
+        <div className="form-container">
             <div className="modal-content">
                 <h2>Details of {viewCustomerData.name}</h2>
                 <table>

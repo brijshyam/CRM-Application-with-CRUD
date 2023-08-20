@@ -19,12 +19,10 @@ const LoginPage = () => {
             });
 
             if (response.ok) {
-                // User is authenticated, save the JWT token to local storage
+                // User is authenticated, save the JWT token to local storage but for some reason it is not working..
                 const { token } = await response.json();
                 console.log(token);
                 localStorage.setItem("loginToken", token);
-
-                // Redirect to the dashboard or home page
                 navigateTo("/");
             } else {
                 console.error("Login failed");
