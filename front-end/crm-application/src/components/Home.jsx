@@ -19,7 +19,9 @@ function Home({ setEditCustomerData }) {
 
     async function fetchCustomers() {
         try {
-            const res = await fetch("http://localhost:5000/api/customers");
+            const res = await fetch(
+                "https://crm-backend-ohfa.onrender.com/api/customers"
+            );
             if (!res.ok) {
                 throw new Error("Failed to fetch data");
             }
@@ -33,13 +35,16 @@ function Home({ setEditCustomerData }) {
     async function addCustomer() {
         console.log(newCustomer);
         try {
-            const res = await fetch("http://localhost:5000/api/customers", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(newCustomer),
-            });
+            const res = await fetch(
+                "https://crm-backend-ohfa.onrender.com/api/customers",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(newCustomer),
+                }
+            );
             if (!res.ok) {
                 throw new Error("Failed to add customer");
             }
@@ -68,7 +73,7 @@ function Home({ setEditCustomerData }) {
     async function deleteCustomer(customerId) {
         try {
             const res = await fetch(
-                `http://localhost:5000/api/customers/${customerId}`,
+                `https://crm-backend-ohfa.onrender.com/api/customers/${customerId}`,
                 {
                     method: "DELETE",
                 }
@@ -85,7 +90,9 @@ function Home({ setEditCustomerData }) {
 
     function viewCustomer(customerId) {
         // Make an API call to fetch the specific customer data
-        fetch(`http://localhost:5000/api/customers/${customerId}`)
+        fetch(
+            `https://crm-backend-ohfa.onrender.com/api/customers/${customerId}`
+        )
             .then((res) => {
                 if (!res.ok) {
                     throw new Error("Failed to fetch customer data");
@@ -102,7 +109,9 @@ function Home({ setEditCustomerData }) {
 
     function handleUpdateCustomer(customerId) {
         // Make an API call to fetch the existing customer data
-        fetch(`http://localhost:5000/api/customers/${customerId}`)
+        fetch(
+            `https://crm-backend-ohfa.onrender.com/api/customers/${customerId}`
+        )
             .then((res) => {
                 if (!res.ok) {
                     throw new Error("Failed to fetch customer data");
